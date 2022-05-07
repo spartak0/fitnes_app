@@ -25,6 +25,8 @@ import com.example.fitness.R
 import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
+import com.example.fitness.ui.details.email
+import com.example.fitness.ui.details.password
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
@@ -90,57 +92,8 @@ fun FirstRegScreen(navController: NavController) {
 
 }
 
-@Composable
-fun password() {
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    EditText(
-        value = password,
-        onValueChange = { newText -> password = newText },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp),
-        placeholderText = "Password",
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_lock),
-                contentDescription = null
-            )
-        },
-        keyboardType = KeyboardType.Password,
-        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val image = if (passwordVisible)
-                Icons.Filled.Visibility
-            else Icons.Filled.VisibilityOff
-            val description = if (passwordVisible) "Hide password" else "Show password"
-            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                Icon(imageVector = image, description)
-            }
-        }
-    )
-}
 
-@Composable
-fun email() {
-    var email by remember { mutableStateOf("") }
-    EditText(
-        value = email,
-        onValueChange = { newText -> email = newText },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp),
-        placeholderText = "Email",
-        leadingIcon = {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_message),
-                contentDescription = null
-            )
-        },
-        keyboardType = KeyboardType.Email
-    )
 
-}
 
 @Composable
 fun firstName() {
