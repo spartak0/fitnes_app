@@ -1,19 +1,17 @@
 package com.example.fitness.ui.welcome
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fitness.R
-import com.example.fitness.ui.main.GradientBtn
+import com.example.fitness.ui.details.Gradient
+import com.example.fitness.ui.main.GradientView
 
 @Composable
 fun WelcomeScreen(navController: NavController) {
@@ -29,13 +27,15 @@ fun WelcomeScreen(navController: NavController) {
                 .align(Alignment.Center)
                 .padding(bottom = 100.dp)
         )
-        GradientBtn(
+        GradientView(
             text = "Get Started",
+            gradient = Gradient.blue,
             modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 40.dp)
-        ) {
-            //todo
-        }
+                .clickable { }
+        )
     }
 }

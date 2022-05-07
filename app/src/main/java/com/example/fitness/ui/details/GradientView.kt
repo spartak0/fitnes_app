@@ -19,19 +19,11 @@ import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.blue_1
 import com.example.fitness.ui.theme.blue_2
 
-val gradient = Brush.horizontalGradient(
-    colors = listOf(
-        blue_2, blue_1
-    )
-)
 
 @Composable
-fun GradientBtn(text: String, modifier: Modifier, onClick: () -> Unit) {
+fun GradientView(text: String, modifier: Modifier, gradient: Brush) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .clickable { onClick() },
+        modifier = modifier,
         shape = RoundedCornerShape(20.dp),
         elevation = 5.dp
     ) {
