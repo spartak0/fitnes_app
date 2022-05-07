@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.gray_light
 
 @Composable
@@ -40,6 +41,7 @@ fun EditText(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),
+        textStyle = Typography.body2 ,
         placeholder = { Text(text = placeholderText) },
         singleLine = true,
         leadingIcon = leadingIcon,
@@ -47,7 +49,7 @@ fun EditText(
         trailingIcon = trailingIcon,
         visualTransformation = visualTransformation,
         readOnly = readOnly,
-        interactionSource = interactionSource
+        interactionSource = interactionSource,
     )
 
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.navigation.NavController
 import com.example.fitness.R
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
@@ -37,7 +38,7 @@ import com.example.fitness.ui.theme.Typography
 import java.util.*
 
 @Composable
-fun SecondRegScreen() {
+fun SecondRegScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,7 +47,7 @@ fun SecondRegScreen() {
         Image(
             painter = painterResource(id = R.drawable.girl_training),
             contentDescription = "",
-            modifier = Modifier.height(300.dp)
+            modifier = Modifier.height(250.dp)
         )
         Text(
             text = "Let's complete your profile",
@@ -74,7 +75,7 @@ fun SecondRegScreen() {
                 .fillMaxWidth()
                 .height(55.dp)
                 .padding(horizontal = 30.dp)
-                .clickable {  },
+                .clickable { },
             gradient = Gradient.blue
         )
 
@@ -230,10 +231,4 @@ fun DropDownMenu() {
         }
     }
 
-}
-
-@Preview
-@Composable
-fun SecondRegScreenPreview() {
-    SecondRegScreen()
 }

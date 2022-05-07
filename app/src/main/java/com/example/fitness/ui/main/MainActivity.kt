@@ -8,6 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fitness.ui.Screen
+import com.example.fitness.ui.reg.FirstRegScreen
+import com.example.fitness.ui.reg.SecondRegScreen
 import com.example.fitness.ui.theme.FitnesSTheme
 import com.example.fitness.ui.welcome.WelcomeScreen
 
@@ -24,9 +26,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation(){
+fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController= navController, startDestination= Screen.WelcomeScreen.route){
-        composable(Screen.WelcomeScreen.route){WelcomeScreen(navController)}
+    NavHost(navController = navController, startDestination = Screen.WelcomeScreen.route) {
+        composable(Screen.WelcomeScreen.route) { WelcomeScreen(navController) }
+        composable(Screen.FirstRegScreen.route) { FirstRegScreen(navController) }
+        composable(Screen.SecondRegScreen.route) { SecondRegScreen(navController) }
     }
 }
