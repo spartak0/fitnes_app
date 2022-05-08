@@ -23,9 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -50,13 +51,13 @@ fun SecondRegScreen(navController: NavController) {
             modifier = Modifier.height(250.dp)
         )
         Text(
-            text = "Let's complete your profile",
+            text = stringResource(R.string.completeProfile),
             modifier = Modifier.padding(top = 30.dp),
             style = Typography.body1,
             fontSize = 20.sp,
         )
         Text(
-            text = "It will help us to know more about you!",
+            text = stringResource(R.string.moreAboutYou),
             style = Typography.body2,
             fontSize = 12.sp
         )
@@ -65,15 +66,23 @@ fun SecondRegScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(15.dp))
         Birthday(context = LocalContext.current)
         Spacer(modifier = Modifier.size(15.dp))
-        WeightOrHeightRow(R.drawable.ic_weight, "Your Weight", "KG")
+        WeightOrHeightRow(
+            R.drawable.ic_weight,
+            stringResource(R.string.yourWeight),
+            stringResource(R.string.kg)
+        )
         Spacer(modifier = Modifier.size(15.dp))
-        WeightOrHeightRow(R.drawable.ic_height, "Your Height", "CM")
+        WeightOrHeightRow(
+            R.drawable.ic_height,
+            stringResource(R.string.yourHeight),
+            stringResource(R.string.cm)
+        )
         Spacer(modifier = Modifier.size(15.dp))
         GradientView(
-            text = "Next",
+            text = stringResource(R.string.next),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(55.dp)
+                .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
                 .clickable { },
             gradient = Gradient.blue
@@ -107,7 +116,7 @@ fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
             modifier = Modifier
                 .clip(RoundedCornerShape(14.dp))
                 .background(Gradient.pink)
-                .size(55.dp)
+                .size(dimensionResource(id = R.dimen.view_height))
         ) {
             Text(text = "$boxText", style = Typography.body2, color = Color.White)
         }

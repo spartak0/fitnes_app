@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.fitness.R
@@ -33,13 +35,13 @@ fun WelcomeScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.size(20.dp))
         GradientView(
-            text = "Get Started",
+            text = stringResource(R.string.getStarted),
             gradient = Gradient.blue,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(55.dp)
+                .height(dimensionResource(id = R.dimen.view_height))
                 .align(Alignment.BottomCenter)
-                .offset(y= (-30).dp)
+                .offset(y = (-30).dp)
                 .padding(horizontal = 30.dp)
                 .clickable { navController.navigate(Screen.FirstRegScreen.route) }
         )

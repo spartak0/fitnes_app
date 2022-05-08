@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.example.fitness.R
 
 @Composable
-fun email() {
+fun Email() {
     var email by remember { mutableStateOf("") }
     EditText(
         value = email,

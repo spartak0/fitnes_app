@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.fitness.R
 
 @Composable
-fun password() {
+fun Password() {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     EditText(

@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.fitness.ui.theme.Typography
-import com.example.fitness.ui.theme.gray_light
+import com.example.fitness.ui.theme.GrayLight
 
 @Composable
 fun EditText(
@@ -36,7 +36,7 @@ fun EditText(
         modifier = modifier.height(55.dp),
         shape = RoundedCornerShape(14.dp),
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = gray_light,
+            backgroundColor = GrayLight,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent

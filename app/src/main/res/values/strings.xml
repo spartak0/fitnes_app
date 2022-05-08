@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">FitnesS</string>
+    <string name="dontHaveAccount">Don\'t have an account yet?</string>
+    <string name="haveAccount">Already have an account yet?</string>
+    <string name="createAccount">Create an Account</string>
+    <string name="heyThere">Hey there,</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="completeProfile">Let\'s complete your profile</string>
+    <string name="moreAboutYou">It will help us to know more about you!</string>
+    <string name="yourWeight">Your Weight</string>
+    <string name="yourHeight">Your Height</string>
+    <string name="kg">KG</string>
+    <string name="cm">CM</string>
+    <string name="next">Next</string>
+    <string name="getStarted">Get Started</string>
 </resources>
