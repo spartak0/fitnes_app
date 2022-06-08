@@ -1,5 +1,7 @@
 package com.example.fitness.ui.reg
 
+
+import android.content.res.Resources.getSystem
 import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,7 +33,7 @@ import com.example.utils.Constant
 
 @Composable
 fun FirstRegScreen(navController: NavController, user: User = User()) {
-    var validation by remember { mutableStateOf(Pair(true, "ok")) }
+    var validation by remember { mutableStateOf(Pair(true, getSystem().getString(R.string.ok))) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,7 +68,12 @@ fun FirstRegScreen(navController: NavController, user: User = User()) {
                 .fillMaxWidth()
                 .clickable {
                     validation =
-                        firstValidationTest(user.firstname, user.lastname, user.email, user.password)
+                        firstValidationTest(
+                            user.firstname,
+                            user.lastname,
+                            user.email,
+                            user.password
+                        )
                     if (validation.first) {
                         navController.navigate(
                             Screen.SecondRegScreen.route,
@@ -110,12 +117,15 @@ fun firstValidationTest(
     email: String,
     password: String
 ): Pair<Boolean, String> {
-    if (firstname.isEmpty()) return Pair(false, "Firstname is empty")
-    if (lastname.isEmpty()) return Pair(false, "Lastname is empty")
-    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return Pair(false, "Provide valid email")
-    if (password.isEmpty()) return Pair(false, "Password is empty")
-    if (password.length < 6) return Pair(false, "Min password length should be 6")
-    return Pair(true, "ok")
+    if (firstname.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyFirstname))
+    if (lastname.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyLastname))
+    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return Pair(
+        false,
+        getSystem().getString(R.string.provideValidEmail)
+    )
+    if (password.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyPassword))
+    if (password.length < 6) return Pair(false, getSystem().getString(R.string.minPasswordLength))
+    return Pair(true, getSystem().getString(R.string.ok))
 }
 
 @Composable

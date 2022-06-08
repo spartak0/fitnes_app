@@ -2,8 +2,8 @@ package com.example.fitness.ui.reg
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.util.Log
-import android.util.Patterns
+import android.content.res.Resources
+import android.content.res.Resources.getSystem
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -30,11 +30,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import androidx.core.util.toRange
 import androidx.navigation.NavController
 import com.example.domain.models.User
 import com.example.fitness.R
@@ -50,7 +48,7 @@ import java.util.*
 
 @Composable
 fun SecondRegScreen(navController: NavController, user: User) {
-    var validation by remember { mutableStateOf(Pair(true, "ok")) }
+    var validation by remember { mutableStateOf(Pair(true, Resources.getSystem().getString(R.string.ok))) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -99,7 +97,7 @@ fun SecondRegScreen(navController: NavController, user: User) {
     }
     if (!validation.first)
         errorDialog(text = validation.second) {
-            validation = Pair(true, "ok")
+            validation = Pair(true, Resources.getSystem().getString(R.string.ok))
         }
 }
 
@@ -109,11 +107,11 @@ fun secondValidationTest(
     weight: Int,
     height: Int
 ): Pair<Boolean, String> {
-    if (gender.isEmpty()) return Pair(false, "Choose gender")
-    if (birthDay.isEmpty()) return Pair(false, "Write birthday")
-    if (weight==0) return Pair(false, "Write valid weight")
-    if (height==0) return Pair(false, "Write valid height")
-    return Pair(true, "ok")
+    if (gender.isEmpty()) return Pair(false, getSystem().getString(R.string.chooseGender))
+    if (birthDay.isEmpty()) return Pair(false, getSystem().getString(R.string.writeValidBirthday))
+    if (weight==0) return Pair(false, getSystem().getString(R.string.validWeight))
+    if (height==0) return Pair(false, getSystem().getString(R.string.validHeight))
+    return Pair(true, getSystem().getString(R.string.ok))
 }
 
 
@@ -123,24 +121,24 @@ fun reg(user: User, context: Context) {
     auth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener {
         if (it.isSuccessful) {
             auth.currentUser?.let { it1 ->
-                database.getReference("Users").child(it1.uid).setValue(user)
+                database.getReference(getSystem().getString(R.string.users)).child(it1.uid).setValue(user)
                     .addOnCompleteListener { it2 ->
                         if (it2.isSuccessful) {
                             Toast.makeText(
                                 context,
-                                "User has been registered successfully!",
+                                getSystem().getString(R.string.successReg),
                                 Toast.LENGTH_LONG
                             ).show()
                         } else Toast.makeText(
                             context,
-                            "Failed to register! Try again!",
+                            getSystem().getString(R.string.failedReg),
                             Toast.LENGTH_LONG
                         ).show()
                     }
             }
         } else Toast.makeText(
             context,
-            "Failed to register! Try again!",
+            getSystem().getString(R.string.failedReg),
             Toast.LENGTH_LONG
         ).show()
     }
@@ -231,7 +229,7 @@ fun Birthday(context: Context, user: User) {
             .padding(horizontal = 30.dp),
         onValueChange = {
         },
-        placeholderText = "Date of Birth",
+        placeholderText = stringResource(R.string.dateOfBirthday),
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_calendar),
@@ -249,7 +247,7 @@ fun Gender(user: User) {
     var expanded by remember { mutableStateOf(false) }
     var gender by remember { mutableStateOf("") }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
-    val list = listOf("Male", "Female")
+    val list = listOf(stringResource(R.string.male), stringResource(R.string.female))
     val icon = if (expanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
@@ -274,7 +272,7 @@ fun Gender(user: User) {
             onValueChange = {
                 gender = it
             },
-            placeholderText = "Choose gender",
+            placeholderText = stringResource(id = R.string.chooseGender),
             trailingIcon = {
                 Icon(icon, "", modifier = Modifier
                     .clickable { expanded = !expanded })

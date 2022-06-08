@@ -18,4 +18,26 @@
     <string name="getStarted">Get Started</string>
     <string name="firstname">First Name</string>
     <string name="lastName">Last Name</string>
+    <string name="homeTitle">Home</string>
+    <string name="homeRoute">home</string>
+    <string name="timersRoute">timers</string>
+    <string name="timersTitle">Timers</string>
+    <string name="profileRoute">profile</string>
+    <string name="profileTitle">Profile</string>
+    <string name="emptyFirstname">Firstname is empty</string>
+    <string name="emptyLastname">Lastname is empty</string>
+    <string name="provideValidEmail">Provide valid email</string>
+    <string name="ok">ok</string>
+    <string name="emptyPassword">Password is empty</string>
+    <string name="minPasswordLength">Min password length should be 6</string>
+    <string name="chooseGender">Choose gender</string>
+    <string name="writeValidBirthday">Write birthday</string>
+    <string name="validWeight">Write valid weight</string>
+    <string name="validHeight">Write valid height</string>
+    <string name="users">Users</string>
+    <string name="successReg">User has been registered successfully!</string>
+    <string name="failedReg">Failed to register! Try again!</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="dateOfBirthday">Date of Birthday</string>
 </resources>
