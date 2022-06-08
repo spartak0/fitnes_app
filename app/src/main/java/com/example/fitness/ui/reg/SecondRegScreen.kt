@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
 import com.example.fitness.R
+import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.main.GradientView
@@ -84,7 +85,7 @@ fun SecondRegScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
-                .clickable { },
+                .clickable { navController.navigate(Screen.MainScreen.route)},
             gradient = Gradient.blue
         )
 
