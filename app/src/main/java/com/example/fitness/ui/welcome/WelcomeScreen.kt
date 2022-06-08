@@ -43,7 +43,7 @@ fun WelcomeScreen(navController: NavController) {
                 .align(Alignment.BottomCenter)
                 .offset(y = (-30).dp)
                 .padding(horizontal = 30.dp)
-                .clickable { navController.navigate(Screen.FirstRegScreen.route) }
+                .clickable { navController.navigate(Screen.LoginScreen.route) }
         )
     }
 }

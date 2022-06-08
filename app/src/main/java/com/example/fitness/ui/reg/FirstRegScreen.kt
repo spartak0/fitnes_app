@@ -1,5 +1,6 @@
 package com.example.fitness.ui.reg
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,19 +16,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
+import com.example.domain.models.User
 import com.example.fitness.R
 import com.example.fitness.ui.Screen
-import com.example.fitness.ui.details.EditText
-import com.example.fitness.ui.details.Gradient
-import com.example.fitness.ui.details.Email
-import com.example.fitness.ui.details.Password
+import com.example.fitness.ui.details.*
 import com.example.fitness.ui.main.GradientView
+import com.example.fitness.ui.main.navigate
 import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
+import com.example.utils.Constant
+
 
 @Composable
-fun FirstRegScreen(navController: NavController) {
+fun FirstRegScreen(navController: NavController, user: User = User()) {
+    var validation by remember { mutableStateOf(Pair(true, "ok")) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,24 +39,24 @@ fun FirstRegScreen(navController: NavController) {
     ) {
         Spacer(modifier = Modifier.size(40.dp))
         Text(
-            text = "Hey there,",
+            text = stringResource(id = R.string.heyThere),
             style = Typography.body2,
             modifier = Modifier
                 .height(24.dp)
         )
         Text(
-            text = "Create an Account",
+            text = stringResource(id = R.string.createAccount),
             style = Typography.body1,
             modifier = Modifier.height(30.dp)
         )
         Spacer(modifier = Modifier.size(30.dp))
-        FirstName()
+        FirstName(user)
         Spacer(modifier = Modifier.size(15.dp))
-        LastName()
+        LastName(user)
         Spacer(modifier = Modifier.size(15.dp))
-        Email()
+        Email(user)
         Spacer(modifier = Modifier.size(15.dp))
-        Password()
+        Password(user)
         Spacer(modifier = Modifier.size(180.dp))
         GradientView(
             text = stringResource(id = R.string.register),
@@ -60,7 +64,16 @@ fun FirstRegScreen(navController: NavController) {
                 .padding(horizontal = 30.dp)
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
-                .clickable { navController.navigate(Screen.SecondRegScreen.route) },
+                .clickable {
+                    validation =
+                        firstValidationTest(user.firstname, user.lastname, user.email, user.password)
+                    if (validation.first) {
+                        navController.navigate(
+                            Screen.SecondRegScreen.route,
+                            bundleOf(Constant.USER_KEY to user)
+                        )
+                    }
+                },
             gradient = Gradient.blue
 
         )
@@ -74,7 +87,9 @@ fun FirstRegScreen(navController: NavController) {
             )
             Text(
                 text = stringResource(R.string.login),
-                modifier = Modifier.padding(start = 5.dp),
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .clickable { navController.navigate(Screen.LoginScreen.route) },
                 color = Color.Blue,
                 fontFamily = myFontFamily,
                 fontWeight = FontWeight.Medium,
@@ -82,24 +97,39 @@ fun FirstRegScreen(navController: NavController) {
             )
 
         }
-
     }
-
+    if (!validation.first)
+        errorDialog(text = validation.second) {
+            validation = Pair(true, "ok")
+        }
 }
 
-
-
+fun firstValidationTest(
+    firstname: String,
+    lastname: String,
+    email: String,
+    password: String
+): Pair<Boolean, String> {
+    if (firstname.isEmpty()) return Pair(false, "Firstname is empty")
+    if (lastname.isEmpty()) return Pair(false, "Lastname is empty")
+    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return Pair(false, "Provide valid email")
+    if (password.isEmpty()) return Pair(false, "Password is empty")
+    if (password.length < 6) return Pair(false, "Min password length should be 6")
+    return Pair(true, "ok")
+}
 
 @Composable
-fun FirstName() {
+fun FirstName(user: User) {
     var firstName by remember { mutableStateOf("") }
     EditText(
         value = firstName,
-        onValueChange = { newText -> firstName = newText },
+        onValueChange = { newText ->
+            firstName = newText
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
-        placeholderText = "First Name",
+        placeholderText = stringResource(R.string.firstname),
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_profile),
@@ -107,18 +137,24 @@ fun FirstName() {
             )
         },
     )
+    user.firstname = firstName
 }
 
 @Composable
-fun LastName() {
+fun LastName(user: User) {
     var lastName by remember { mutableStateOf("") }
     EditText(
         value = lastName,
-        onValueChange = { newText -> lastName = newText },
+        onValueChange = { newText ->
+            run {
+                lastName = newText
+                user.lastname = newText
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
-        placeholderText = "Last Name",
+        placeholderText = stringResource(R.string.lastName),
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_profile),
@@ -126,4 +162,5 @@ fun LastName() {
             )
         },
     )
+    user.lastname = lastName
 }

@@ -2,7 +2,10 @@ package com.example.fitness.ui.reg
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.util.Log
+import android.util.Patterns
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,20 +30,27 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.core.util.toRange
 import androidx.navigation.NavController
+import com.example.domain.models.User
 import com.example.fitness.R
-import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
+import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.theme.Typography
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 @Composable
-fun SecondRegScreen(navController: NavController) {
+fun SecondRegScreen(navController: NavController, user: User) {
+    var validation by remember { mutableStateOf(Pair(true, "ok")) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,21 +73,13 @@ fun SecondRegScreen(navController: NavController) {
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.size(30.dp))
-        DropDownMenu()
+        Gender(user)
         Spacer(modifier = Modifier.size(15.dp))
-        Birthday(context = LocalContext.current)
+        Birthday(context = LocalContext.current, user)
         Spacer(modifier = Modifier.size(15.dp))
-        WeightOrHeightRow(
-            R.drawable.ic_weight,
-            stringResource(R.string.yourWeight),
-            stringResource(R.string.kg)
-        )
+        Anthropometry(UserAnthropometry.Weight, user)
         Spacer(modifier = Modifier.size(15.dp))
-        WeightOrHeightRow(
-            R.drawable.ic_height,
-            stringResource(R.string.yourHeight),
-            stringResource(R.string.cm)
-        )
+        Anthropometry(UserAnthropometry.Height, user)
         Spacer(modifier = Modifier.size(15.dp))
         GradientView(
             text = stringResource(R.string.next),
@@ -85,15 +87,67 @@ fun SecondRegScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
-                .clickable { navController.navigate(Screen.MainScreen.route)},
+                .clickable {
+                    validation =
+                        secondValidationTest(user.gender, user.birthDay, user.weight, user.height)
+                    if (validation.first) {
+                        reg(user, navController.context)
+                    }
+                },
             gradient = Gradient.blue
         )
+    }
+    if (!validation.first)
+        errorDialog(text = validation.second) {
+            validation = Pair(true, "ok")
+        }
+}
 
+fun secondValidationTest(
+    gender: String,
+    birthDay: String,
+    weight: Int,
+    height: Int
+): Pair<Boolean, String> {
+    if (gender.isEmpty()) return Pair(false, "Choose gender")
+    if (birthDay.isEmpty()) return Pair(false, "Write birthday")
+    if (weight==0) return Pair(false, "Write valid weight")
+    if (height==0) return Pair(false, "Write valid height")
+    return Pair(true, "ok")
+}
+
+
+fun reg(user: User, context: Context) {
+    val auth = Firebase.auth
+    val database = Firebase.database
+    auth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener {
+        if (it.isSuccessful) {
+            auth.currentUser?.let { it1 ->
+                database.getReference("Users").child(it1.uid).setValue(user)
+                    .addOnCompleteListener { it2 ->
+                        if (it2.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                "User has been registered successfully!",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else Toast.makeText(
+                            context,
+                            "Failed to register! Try again!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+            }
+        } else Toast.makeText(
+            context,
+            "Failed to register! Try again!",
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
 
 @Composable
-fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
+fun Anthropometry(userAnthropometry: UserAnthropometry, user: User) {
     var value by remember { mutableStateOf("") }
     Row(
         modifier = Modifier
@@ -103,12 +157,14 @@ fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
         EditText(
             modifier = Modifier.width(245.dp),
             value = value,
-            onValueChange = { value = it },
-            placeholderText = hint,
+            onValueChange = {
+                value = it
+            },
+            placeholderText = stringResource(id = userAnthropometry.hintId),
             keyboardType = KeyboardType.Decimal,
             leadingIcon = {
                 Icon(
-                    painterResource(id = leadIcon), ""
+                    painterResource(id = userAnthropometry.iconId), ""
                 )
             }
         )
@@ -119,13 +175,26 @@ fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
                 .background(Gradient.pink)
                 .size(dimensionResource(id = R.dimen.view_height))
         ) {
-            Text(text = "$boxText", style = Typography.body2, color = Color.White)
+            Text(
+                text = stringResource(id = userAnthropometry.unitId),
+                style = Typography.body2,
+                color = Color.White
+            )
+        }
+        when (userAnthropometry) {
+            UserAnthropometry.Weight -> {
+                user.weight = if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+            }
+            UserAnthropometry.Height -> {
+                user.height = if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+            }
         }
     }
 }
 
+
 @Composable
-fun Birthday(context: Context) {
+fun Birthday(context: Context, user: User) {
     val year: Int
     val month: Int
     val day: Int
@@ -138,8 +207,6 @@ fun Birthday(context: Context) {
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-
-
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
@@ -163,7 +230,6 @@ fun Birthday(context: Context) {
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
         onValueChange = {
-            date = it
         },
         placeholderText = "Date of Birth",
         leadingIcon = {
@@ -175,11 +241,11 @@ fun Birthday(context: Context) {
         readOnly = true,
         interactionSource = interactionSource
     )
-
+    user.birthDay = date
 }
 
 @Composable
-fun DropDownMenu() {
+fun Gender(user: User) {
     var expanded by remember { mutableStateOf(false) }
     var gender by remember { mutableStateOf("") }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -240,5 +306,5 @@ fun DropDownMenu() {
 
         }
     }
-
+    user.gender = gender
 }

@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">FitnesS</string>
+
     <string name="dontHaveAccount">Don\'t have an account yet?</string>
     <string name="haveAccount">Already have an account yet?</string>
     <string name="createAccount">Create an Account</string>
     <string name="heyThere">Hey there,</string>
+    <string name="welcomeBack">Welcome back</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="completeProfile">Let\'s complete your profile</string>
@@ -14,4 +16,6 @@
     <string name="cm">CM</string>
     <string name="next">Next</string>
     <string name="getStarted">Get Started</string>
+    <string name="firstname">First Name</string>
+    <string name="lastName">Last Name</string>
 </resources>

@@ -3,14 +3,14 @@
 package com.example.fitness.ui.bottom_nav_bar
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -22,14 +22,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.theme.Pink1
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BottomBarScreen(navController: NavController) {
-    val navControllerBottomBar= rememberNavController()
+    val navControllerBottomBar = rememberNavController()
     Scaffold(bottomBar = { BottomBar(navController = navControllerBottomBar) }) {
         BottomNavGraph(navController = navControllerBottomBar)
     }
