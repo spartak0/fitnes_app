@@ -23,7 +23,7 @@ fun GradientView(text: String, modifier: Modifier, gradient: Brush) {
         elevation = 5.dp
     ) {
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .background(brush = gradient),
             contentAlignment = Alignment.Center
@@ -31,7 +31,7 @@ fun GradientView(text: String, modifier: Modifier, gradient: Brush) {
             Text(
                 text = text,
                 color = Color.White,
-                style= Typography.body1
+                style = Typography.body1
             )
         }
     }

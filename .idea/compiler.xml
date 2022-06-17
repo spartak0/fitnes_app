@@ -5,9 +5,10 @@
       <module name="FitnesS.app" target="11" />
       <module name="FitnesS.app.data" target="11" />
       <module name="FitnesS.data" target="11" />
-      <module name="FitnesS.domain" target="1.8" />
-      <module name="FitnesS.domain.main" target="1.8" />
-      <module name="FitnesS.domain.test" target="1.8" />
+      <module name="FitnesS.domain" target="11" />
+      <module name="FitnesS.domain2" target="1.8" />
+      <module name="FitnesS.domain2.main" target="1.8" />
+      <module name="FitnesS.domain2.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

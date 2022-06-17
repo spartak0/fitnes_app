@@ -1,5 +1,6 @@
 package com.example.fitness.ui.bottom_nav_bar
 
+import android.content.res.Resources.getSystem
 import com.example.fitness.R
 
 sealed class BottomBarItemScreen(
@@ -8,20 +9,20 @@ sealed class BottomBarItemScreen(
     val icon: Int
 ) {
     object Home : BottomBarItemScreen(
-        route = "home",
-        title = "Home",
+        route = getSystem().getString(R.string.homeRoute),
+        title = getSystem().getString(R.string.homeTitle),
         icon = R.drawable.ic_home
     )
 
     object Timers : BottomBarItemScreen(
-        route = "timers",
-        title = "Timers",
+        route = getSystem().getString(R.string.timersRoute),
+        title = getSystem().getString(R.string.timersTitle),
         icon = R.drawable.ic_timer
     )
 
     object Profile : BottomBarItemScreen(
-        route = "profile",
-        title = "Profile",
+        route = getSystem().getString(R.string.profileRoute),
+        title = getSystem().getString(R.string.profileTitle),
         icon = R.drawable.ic_profile
     )
 }

@@ -2,7 +2,10 @@ package com.example.fitness.ui.reg
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.res.Resources
+import android.content.res.Resources.getSystem
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,16 +34,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
+import com.example.domain.models.User
 import com.example.fitness.R
-import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
+import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.theme.Typography
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.*
 
 @Composable
-fun SecondRegScreen(navController: NavController) {
+fun SecondRegScreen(navController: NavController, user: User) {
+    var validation by remember { mutableStateOf(Pair(true, Resources.getSystem().getString(R.string.ok))) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,21 +71,13 @@ fun SecondRegScreen(navController: NavController) {
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.size(30.dp))
-        DropDownMenu()
+        Gender(user)
         Spacer(modifier = Modifier.size(15.dp))
-        Birthday(context = LocalContext.current)
+        Birthday(context = LocalContext.current, user)
         Spacer(modifier = Modifier.size(15.dp))
-        WeightOrHeightRow(
-            R.drawable.ic_weight,
-            stringResource(R.string.yourWeight),
-            stringResource(R.string.kg)
-        )
+        Anthropometry(UserAnthropometry.Weight, user)
         Spacer(modifier = Modifier.size(15.dp))
-        WeightOrHeightRow(
-            R.drawable.ic_height,
-            stringResource(R.string.yourHeight),
-            stringResource(R.string.cm)
-        )
+        Anthropometry(UserAnthropometry.Height, user)
         Spacer(modifier = Modifier.size(15.dp))
         GradientView(
             text = stringResource(R.string.next),
@@ -85,15 +85,67 @@ fun SecondRegScreen(navController: NavController) {
                 .fillMaxWidth()
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
-                .clickable { navController.navigate(Screen.MainScreen.route)},
+                .clickable {
+                    validation =
+                        secondValidationTest(user.gender, user.birthDay, user.weight, user.height)
+                    if (validation.first) {
+                        reg(user, navController.context)
+                    }
+                },
             gradient = Gradient.blue
         )
+    }
+    if (!validation.first)
+        errorDialog(text = validation.second) {
+            validation = Pair(true, Resources.getSystem().getString(R.string.ok))
+        }
+}
 
+fun secondValidationTest(
+    gender: String,
+    birthDay: String,
+    weight: Int,
+    height: Int
+): Pair<Boolean, String> {
+    if (gender.isEmpty()) return Pair(false, getSystem().getString(R.string.chooseGender))
+    if (birthDay.isEmpty()) return Pair(false, getSystem().getString(R.string.writeValidBirthday))
+    if (weight==0) return Pair(false, getSystem().getString(R.string.validWeight))
+    if (height==0) return Pair(false, getSystem().getString(R.string.validHeight))
+    return Pair(true, getSystem().getString(R.string.ok))
+}
+
+
+fun reg(user: User, context: Context) {
+    val auth = Firebase.auth
+    val database = Firebase.database
+    auth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener {
+        if (it.isSuccessful) {
+            auth.currentUser?.let { it1 ->
+                database.getReference(getSystem().getString(R.string.users)).child(it1.uid).setValue(user)
+                    .addOnCompleteListener { it2 ->
+                        if (it2.isSuccessful) {
+                            Toast.makeText(
+                                context,
+                                getSystem().getString(R.string.successReg),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        } else Toast.makeText(
+                            context,
+                            getSystem().getString(R.string.failedReg),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+            }
+        } else Toast.makeText(
+            context,
+            getSystem().getString(R.string.failedReg),
+            Toast.LENGTH_LONG
+        ).show()
     }
 }
 
 @Composable
-fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
+fun Anthropometry(userAnthropometry: UserAnthropometry, user: User) {
     var value by remember { mutableStateOf("") }
     Row(
         modifier = Modifier
@@ -103,12 +155,14 @@ fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
         EditText(
             modifier = Modifier.width(245.dp),
             value = value,
-            onValueChange = { value = it },
-            placeholderText = hint,
+            onValueChange = {
+                value = it
+            },
+            placeholderText = stringResource(id = userAnthropometry.hintId),
             keyboardType = KeyboardType.Decimal,
             leadingIcon = {
                 Icon(
-                    painterResource(id = leadIcon), ""
+                    painterResource(id = userAnthropometry.iconId), ""
                 )
             }
         )
@@ -119,13 +173,26 @@ fun WeightOrHeightRow(leadIcon: Int, hint: String, boxText: String) {
                 .background(Gradient.pink)
                 .size(dimensionResource(id = R.dimen.view_height))
         ) {
-            Text(text = "$boxText", style = Typography.body2, color = Color.White)
+            Text(
+                text = stringResource(id = userAnthropometry.unitId),
+                style = Typography.body2,
+                color = Color.White
+            )
+        }
+        when (userAnthropometry) {
+            UserAnthropometry.Weight -> {
+                user.weight = if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+            }
+            UserAnthropometry.Height -> {
+                user.height = if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+            }
         }
     }
 }
 
+
 @Composable
-fun Birthday(context: Context) {
+fun Birthday(context: Context, user: User) {
     val year: Int
     val month: Int
     val day: Int
@@ -138,8 +205,6 @@ fun Birthday(context: Context) {
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
-
-
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
@@ -163,9 +228,8 @@ fun Birthday(context: Context) {
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
         onValueChange = {
-            date = it
         },
-        placeholderText = "Date of Birth",
+        placeholderText = stringResource(R.string.dateOfBirthday),
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_calendar),
@@ -175,15 +239,15 @@ fun Birthday(context: Context) {
         readOnly = true,
         interactionSource = interactionSource
     )
-
+    user.birthDay = date
 }
 
 @Composable
-fun DropDownMenu() {
+fun Gender(user: User) {
     var expanded by remember { mutableStateOf(false) }
     var gender by remember { mutableStateOf("") }
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
-    val list = listOf("Male", "Female")
+    val list = listOf(stringResource(R.string.male), stringResource(R.string.female))
     val icon = if (expanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
@@ -208,7 +272,7 @@ fun DropDownMenu() {
             onValueChange = {
                 gender = it
             },
-            placeholderText = "Choose gender",
+            placeholderText = stringResource(id = R.string.chooseGender),
             trailingIcon = {
                 Icon(icon, "", modifier = Modifier
                     .clickable { expanded = !expanded })
@@ -240,5 +304,5 @@ fun DropDownMenu() {
 
         }
     }
-
+    user.gender = gender
 }

@@ -14,10 +14,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.domain.models.User
 import com.example.fitness.R
 
 @Composable
-fun Password() {
+fun Password(user: User) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     EditText(
@@ -45,4 +46,5 @@ fun Password() {
             }
         }
     )
+    user.password=password
 }
