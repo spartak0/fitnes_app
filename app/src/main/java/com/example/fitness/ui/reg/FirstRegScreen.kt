@@ -1,8 +1,6 @@
 package com.example.fitness.ui.reg
 
 
-import android.content.res.Resources.getSystem
-import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.domain.models.User
 import com.example.fitness.R
@@ -30,10 +29,14 @@ import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
 import com.example.utils.Constant
 
-
 @Composable
-fun FirstRegScreen(navController: NavController, user: User = User()) {
-    var validation by remember { mutableStateOf(Pair(true, getSystem().getString(R.string.ok))) }
+fun FirstRegScreen(
+    navController: NavController,
+    user: User = User(),
+    viewModel:RegViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
+    val ok = stringResource(id = R.string.ok)
+    var validation by remember { mutableStateOf(Pair(true, ok)) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +71,7 @@ fun FirstRegScreen(navController: NavController, user: User = User()) {
                 .fillMaxWidth()
                 .clickable {
                     validation =
-                        firstValidationTest(
+                        viewModel.firstValidationTest(
                             user.firstname,
                             user.lastname,
                             user.email,
@@ -107,25 +110,8 @@ fun FirstRegScreen(navController: NavController, user: User = User()) {
     }
     if (!validation.first)
         errorDialog(text = validation.second) {
-            validation = Pair(true, "ok")
+            validation = Pair(true, ok)
         }
-}
-
-fun firstValidationTest(
-    firstname: String,
-    lastname: String,
-    email: String,
-    password: String
-): Pair<Boolean, String> {
-    if (firstname.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyFirstname))
-    if (lastname.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyLastname))
-    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return Pair(
-        false,
-        getSystem().getString(R.string.provideValidEmail)
-    )
-    if (password.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyPassword))
-    if (password.length < 6) return Pair(false, getSystem().getString(R.string.minPasswordLength))
-    return Pair(true, getSystem().getString(R.string.ok))
 }
 
 @Composable

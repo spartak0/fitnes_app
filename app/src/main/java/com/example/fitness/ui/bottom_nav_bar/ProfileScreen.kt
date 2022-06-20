@@ -1,13 +1,20 @@
 package com.example.fitness.ui.bottom_nav_bar
 
-import androidx.compose.foundation.clickable
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.fitness.ui.Screen
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfileScreen(navController: NavController) {
-    Text(text = "Profile", modifier = Modifier.clickable { FirebaseAuth.getInstance().signOut() })
+fun ProfileScreen(navControllerBottomBar: NavController, navControllerScreens:NavController) {
+    val mAuth = FirebaseAuth.getInstance()
+    Column() {
+        Button(onClick = {
+            mAuth.signOut()
+            navControllerScreens.navigate(Screen.LoginScreen.route)
+        }) {
+        }
+    }
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -30,7 +31,7 @@ import com.example.fitness.ui.theme.Pink1
 fun BottomBarScreen(navController: NavController) {
     val navControllerBottomBar = rememberNavController()
     Scaffold(bottomBar = { BottomBar(navController = navControllerBottomBar) }) {
-        BottomNavGraph(navController = navControllerBottomBar)
+        BottomNavGraph(navControllerBottomBar = navControllerBottomBar, navControllerScreens = navController)
     }
 }
 
@@ -77,10 +78,10 @@ fun RowScope.AddItem(
 
 
 @Composable
-fun BottomNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = BottomBarItemScreen.Home.route) {
-        composable(BottomBarItemScreen.Home.route) { HomeScreen(navController = navController) }
-        composable(BottomBarItemScreen.Timers.route) { TimersScreen(navController = navController) }
-        composable(BottomBarItemScreen.Profile.route) { ProfileScreen(navController = navController) }
+fun BottomNavGraph(navControllerBottomBar: NavHostController, navControllerScreens: NavController) {
+    NavHost(navController = navControllerBottomBar, startDestination = BottomBarItemScreen.Home.route) {
+        composable(BottomBarItemScreen.Home.route) { HomeScreen(navControllerBottomBar = navControllerBottomBar) }
+        composable(BottomBarItemScreen.Timers.route) { TimersScreen(navControllerBottomBar = navControllerBottomBar) }
+        composable(BottomBarItemScreen.Profile.route) { ProfileScreen(navControllerBottomBar = navControllerBottomBar, navControllerScreens= navControllerScreens) }
     }
 }

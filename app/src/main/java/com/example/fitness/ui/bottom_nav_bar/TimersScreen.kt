@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
 @Composable
-fun TimersScreen(navController: NavController) {
+fun TimersScreen(navControllerBottomBar: NavController) {
     Text(text = "Timers")
 }

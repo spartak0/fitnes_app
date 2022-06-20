@@ -1,11 +1,12 @@
 package com.example.fitness.ui.login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,19 +23,24 @@ import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.Email
 import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.details.Password
+import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.main.navigate
 import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
 import com.example.utils.Constant
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
+    if (viewModel.getCurrentUser() != null) navController.navigate(Screen.BottomBarScreen.route)
     val user = User()
+    val ok = stringResource(id = R.string.ok)
+    var validation by remember { mutableStateOf(Pair(true, ok)) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,15 +65,35 @@ fun LoginScreen(navController: NavController) {
         Password(user)
         Spacer(modifier = Modifier.size(350.dp))
         GradientView(
-            text = "Login",
+            text = stringResource(id = R.string.login),
             modifier = Modifier
                 .padding(horizontal = 30.dp)
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
+                    validation = viewModel.validationEmailPassword(user.email, user.password)
+                    if (validation.first) {
+                        CoroutineScope(Dispatchers.IO).launch { viewModel.loginUser(user.email, user.password) }
+                        viewModel.successLogin.onEach {
+                            Log.d("AAA", "LoginScreen: $it")
+                            if (it) navController.navigate(Screen.BottomBarScreen.route)
+                            else Toast
+                                .makeText(
+                                    navController.context,
+                                    navController.context.getString(R.string.failedLogin),
+                                    Toast.LENGTH_LONG
+                                )
+                                .show()
+                        }
+                    } else Toast
+                        .makeText(
+                            navController.context,
+                            validation.second,
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
                 },
             gradient = Gradient.blue
-
         )
         Spacer(modifier = Modifier.size(15.dp))
         Row() {
@@ -94,5 +120,9 @@ fun LoginScreen(navController: NavController) {
             )
         }
     }
+    if (!validation.first)
+        errorDialog(text = validation.second) {
+            validation = Pair(true, ok)
+        }
 }
 
