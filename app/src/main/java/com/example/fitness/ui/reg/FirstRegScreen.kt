@@ -33,7 +33,7 @@ import com.example.utils.Constant
 fun FirstRegScreen(
     navController: NavController,
     user: User = User(),
-    viewModel:RegViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel:RegViewModel = viewModel()
 ) {
     val ok = stringResource(id = R.string.ok)
     var validation by remember { mutableStateOf(Pair(true, ok)) }

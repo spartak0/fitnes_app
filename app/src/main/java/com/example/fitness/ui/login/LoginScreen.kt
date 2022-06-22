@@ -39,8 +39,7 @@ import kotlinx.coroutines.launch
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     if (viewModel.getCurrentUser() != null) navController.navigate(Screen.BottomBarScreen.route)
     val user = User()
-    val ok = stringResource(id = R.string.ok)
-    var validation by remember { mutableStateOf(Pair(true, ok)) }
+    val validation by viewModel.validation.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,27 +70,9 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
-                    validation = viewModel.validationEmailPassword(user.email, user.password)
-                    if (validation.first) {
-                        CoroutineScope(Dispatchers.IO).launch { viewModel.loginUser(user.email, user.password) }
-                        viewModel.successLogin.onEach {
-                            Log.d("AAA", "LoginScreen: $it")
-                            if (it) navController.navigate(Screen.BottomBarScreen.route)
-                            else Toast
-                                .makeText(
-                                    navController.context,
-                                    navController.context.getString(R.string.failedLogin),
-                                    Toast.LENGTH_LONG
-                                )
-                                .show()
-                        }
-                    } else Toast
-                        .makeText(
-                            navController.context,
-                            validation.second,
-                            Toast.LENGTH_LONG
-                        )
-                        .show()
+                    viewModel.onClickLogin(user.email, user.password) {
+                        navController.navigate(Screen.BottomBarScreen.route)
+                    }
                 },
             gradient = Gradient.blue
         )
@@ -122,7 +103,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     }
     if (!validation.first)
         errorDialog(text = validation.second) {
-            validation = Pair(true, ok)
+            viewModel.onErrorClick()
         }
 }
 

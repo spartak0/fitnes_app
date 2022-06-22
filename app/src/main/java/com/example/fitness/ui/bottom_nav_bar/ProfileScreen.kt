@@ -9,10 +9,9 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ProfileScreen(navControllerBottomBar: NavController, navControllerScreens:NavController) {
-    val mAuth = FirebaseAuth.getInstance()
     Column() {
         Button(onClick = {
-            mAuth.signOut()
+            FirebaseAuth.getInstance().signOut()
             navControllerScreens.navigate(Screen.LoginScreen.route)
         }) {
         }

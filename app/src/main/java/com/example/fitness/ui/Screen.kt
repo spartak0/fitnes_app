@@ -5,5 +5,5 @@ sealed class Screen(val route:String){
     object LoginScreen:Screen("login_screen")
     object FirstRegScreen:Screen("first_reg_screen")
     object SecondRegScreen:Screen("second_reg_screen")
-    object BottomBarScreen:Screen("main_screen")
+    object BottomBarScreen:Screen("bottom_bar_screen")
 }

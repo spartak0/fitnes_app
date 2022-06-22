@@ -20,18 +20,6 @@ class FirebaseService(
     fun regUser(user: User, onCompleteListener: OnCompleteListener<AuthResult>) {
         auth.createUserWithEmailAndPassword(user.email, user.password)
             .addOnCompleteListener(onCompleteListener)
-//            .addOnCompleteListener {
-//            if (it.isSuccessful) {
-//                auth.currentUser?.let { it1 ->
-//                    addUserInDatabase(user, it1.uid)
-//                    _user.value = user
-//                }
-//            } else Toast.makeText(
-//                context,
-//                context.getString(R.string.failedReg),
-//                Toast.LENGTH_LONG
-//            ).show()
-        //   }
     }
 
     fun loginUser(
@@ -41,32 +29,11 @@ class FirebaseService(
     ) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener (onCompleteListener)
-//            .addOnCompleteListener {
-//            if (it.isSuccessful) {
-//                auth.currentUser?.let { it1 ->
-//                    fetchUserInfo(it1.uid)
-//                }
-//            } else {
-//                Toast.makeText(context, context.getString(R.string.failedLogin), Toast.LENGTH_LONG)
-//                    .show()
-//            }
-//        }
     }
 
     fun fetchUserInfo(userID: String, valueEventListener: ValueEventListener) {
         database.getReference(context.getString(R.string.users)).child(userID)
             .addValueEventListener(valueEventListener)
-//            .addValueEventListener(object : ValueEventListener {
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    val tmp: User = snapshot.getValue(User::class.java) ?: User()
-//                    _user.value = tmp
-//                }
-//
-//                override fun onCancelled(error: DatabaseError) {
-//                    TODO("Not yet implemented")
-//                }
-//
-//            })
     }
 
     fun addUserInDatabase(user: User, userID: String, onCompleteListener: OnCompleteListener<Void>) {

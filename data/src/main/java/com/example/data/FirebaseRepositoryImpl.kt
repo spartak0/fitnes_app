@@ -8,6 +8,8 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class FirebaseRepositoryImpl(
     private val firebaseService: FirebaseService
@@ -16,7 +18,7 @@ class FirebaseRepositoryImpl(
         firebaseService.regUser(user, onCompleteListener)
     }
 
-    override fun loginUser(email: String, password: String, onCompleteListener: OnCompleteListener<AuthResult>){
+    override fun loginUser(email: String, password: String, onCompleteListener: OnCompleteListener<AuthResult>) {
         firebaseService.loginUser(email,password, onCompleteListener)
     }
 
