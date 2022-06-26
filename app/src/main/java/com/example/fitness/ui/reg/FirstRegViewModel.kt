@@ -33,22 +33,19 @@ class FirstRegViewModel @Inject constructor(
 
 
     fun validationTest(
-        firstname: String,
-        lastname: String,
-        email: String,
-        password: String
+        user: User
     ) {
-        if (firstname.isEmpty()) _error.value =
+        if (user.firstname.isEmpty()) _error.value =
             Pair(true, context.getString(R.string.emptyFirstname))
-        else if (lastname.isEmpty()) _error.value =
+        else if (user.lastname.isEmpty()) _error.value =
             Pair(true, context.getString(R.string.emptyLastname))
-        else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) _error.value = Pair(
+        else if (!Patterns.EMAIL_ADDRESS.matcher(user.email).matches()) _error.value = Pair(
             true,
             context.getString(R.string.provideValidEmail)
         )
-        else if (password.isEmpty()) _error.value =
+        else if (user.password.isEmpty()) _error.value =
             Pair(true, context.getString(R.string.emptyPassword))
-        else if (password.length < 6) _error.value =
+        else if (user.password.length < 6) _error.value =
             Pair(true, context.getString(R.string.minPasswordLength))
         else _error.value = Pair(false, context.getString(R.string.ok))
     }
@@ -58,13 +55,10 @@ class FirstRegViewModel @Inject constructor(
         _error.value = Pair(false, context.getString(R.string.ok))
     }
 
-    fun onClickNext(user: User, navigate:()->Unit) {
-        viewModelScope.launch{
+    fun onClickNext(user: User, navigate: () -> Unit) {
+        viewModelScope.launch {
             validationTest(
-                user.firstname,
-                user.lastname,
-                user.email,
-                user.password
+                user
             )
             if (!_error.value.first) navigate()
         }

@@ -6,6 +6,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.FirebaseRepositoryImpl
+import com.example.domain.FirebaseRepository
 import com.example.domain.models.User
 import com.example.fitness.R
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SecondRegViewModel @Inject constructor(
-    private val repository: FirebaseRepositoryImpl,
+    private val repository: FirebaseRepository,
     @ApplicationContext val context: Context
 ) : ViewModel() {
 
@@ -45,21 +46,18 @@ class SecondRegViewModel @Inject constructor(
 
 
     fun validationTest(
-        gender: String,
-        birthDay: String,
-        weight: Int,
-        height: Int
+        user:User
     ) {
-        if (gender.isEmpty())
+        if (user.gender.isEmpty())
             _error.value =
                 Pair(
                     true,
                     context.getString(R.string.chooseGender)
                 )
-        else if (birthDay.isEmpty()) _error.value =
+        else if (user.birthDay.isEmpty()) _error.value =
             Pair(true, context.getString(R.string.writeValidBirthday))
-        else if (weight == 0) _error.value = Pair(true, context.getString(R.string.validWeight))
-        else if (height == 0) _error.value = Pair(true, context.getString(R.string.validHeight))
+        else if (user.weight == 0) _error.value = Pair(true, context.getString(R.string.validWeight))
+        else if (user.height == 0) _error.value = Pair(true, context.getString(R.string.validHeight))
         else _error.value = Pair(false, context.getString(R.string.ok))
     }
 
@@ -69,7 +67,7 @@ class SecondRegViewModel @Inject constructor(
 
     fun regUser(user: User, navigate: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            validationTest(user.gender, user.birthDay, user.weight, user.height)
+            validationTest(user)
             if (!_error.value.first) {
                 repository.regUser(user.email, user.password).addOnCompleteListener {
                     if (it.isSuccessful) {

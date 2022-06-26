@@ -3,6 +3,7 @@ package com.example.fitness.di
 import android.content.Context
 import com.example.data.FirebaseRepositoryImpl
 import com.example.data.FirebaseService
+import com.example.domain.FirebaseRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,7 +23,7 @@ class DataModule {
 
     @Singleton
     @Provides
-    fun provideRepositoryImpl(firebaseService: FirebaseService): FirebaseRepositoryImpl {
+    fun provideRepositoryImpl(firebaseService: FirebaseService): FirebaseRepository {
         return FirebaseRepositoryImpl(firebaseService= firebaseService)
     }
 

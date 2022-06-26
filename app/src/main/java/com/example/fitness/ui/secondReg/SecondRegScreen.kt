@@ -87,12 +87,7 @@ fun SecondRegScreen(
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
                 .clickable {
-                    viewModel.validationTest(
-                        user.gender,
-                        user.birthDay,
-                        user.weight,
-                        user.height
-                    )
+                    viewModel.validationTest(user)
                     if (!error.first) {
                         viewModel.regUser(user) {
                             navController.navigate(Screen.BottomBarScreen.route)
@@ -147,11 +142,11 @@ fun Anthropometry(userAnthropometry: UserAnthropometry, user: User) {
         when (userAnthropometry) {
             UserAnthropometry.Weight -> {
                 user.weight =
-                    if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+                    if (value.isEmpty() or !isNum(value)) 0 else value.toInt()
             }
             UserAnthropometry.Height -> {
                 user.height =
-                    if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+                    if (value.isEmpty() or !isNum(value)) 0 else value.toInt()
             }
         }
     }
@@ -272,4 +267,8 @@ fun Gender(user: User) {
         }
     }
     user.gender = gender
+}
+
+fun isNum(value: String): Boolean {
+    return value.matches("[\\d]+".toRegex())
 }

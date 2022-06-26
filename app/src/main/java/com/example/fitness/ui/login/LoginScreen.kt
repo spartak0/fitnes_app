@@ -64,12 +64,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
-                    runBlocking {
-                        viewModel
-                            .loginUser(user.email, user.password){
-                                navController.navigate(Screen.BottomBarScreen.route)
-                            }
-                    }
+                    viewModel
+                        .loginUser(user.email, user.password) {
+                            navController.navigate(Screen.BottomBarScreen.route)
+                        }
                 },
             gradient = Gradient.blue
         )

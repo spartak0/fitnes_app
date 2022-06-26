@@ -5,6 +5,7 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.FirebaseRepositoryImpl
+import com.example.domain.FirebaseRepository
 import com.example.fitness.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: FirebaseRepositoryImpl,
+    private val repository: FirebaseRepository,
     @ApplicationContext val context: Context,
 ) : ViewModel() {
 
