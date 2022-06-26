@@ -5,51 +5,64 @@ import android.os.Parcelable
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.domain.FirebaseRepository
 import com.example.domain.models.User
 import com.example.fitness.ui.Screen
 import com.example.fitness.ui.bottom_nav_bar.BottomBarScreen
 import com.example.fitness.ui.login.LoginScreen
-import com.example.fitness.ui.reg.FirstName
+import com.example.fitness.ui.login.LoginViewModel
 import com.example.fitness.ui.reg.FirstRegScreen
-import com.example.fitness.ui.reg.SecondRegScreen
+import com.example.fitness.ui.reg.FirstRegViewModel
+import com.example.fitness.ui.secondReg.SecondRegScreen
+import com.example.fitness.ui.secondReg.SecondRegViewModel
 import com.example.fitness.ui.theme.FitnesSTheme
 import com.example.fitness.ui.welcome.WelcomeScreen
 import com.example.utils.Constant
+import com.google.firebase.auth.FirebaseUser
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var firebaseRepository: FirebaseRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             FitnesSTheme {
-                Navigation()
+                Navigation(firebaseRepository.getCurrentUser())
             }
         }
     }
 }
 
 @Composable
-fun Navigation() {
+fun Navigation(currentUser: FirebaseUser?) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.LoginScreen.route) {
+    NavHost(
+        navController = navController,
+        startDestination = if (currentUser == null) Screen.LoginScreen.route else Screen.BottomBarScreen.route
+    ) {
         composable(Screen.WelcomeScreen.route) { WelcomeScreen(navController) }
-        composable(Screen.LoginScreen.route) { LoginScreen(navController) }
+        composable(Screen.LoginScreen.route) {
+            val viewModel: LoginViewModel = hiltViewModel<LoginViewModel>()
+            LoginScreen(navController, viewModel)
+        }
         composable(Screen.FirstRegScreen.route) {
-            FirstRegScreen(navController = navController)
-//            navController.previousBackStackEntry?.arguments?.getParcelable<User>(Constant.USER_KEY)
-//                ?.let {
-//                    FirstRegScreen(navController, it)
-//                }
+            val viewModel: FirstRegViewModel = hiltViewModel<FirstRegViewModel>()
+            FirstRegScreen(navController = navController, viewModel = viewModel)
         }
         composable(Screen.SecondRegScreen.route) {
+            val viewModel: SecondRegViewModel = hiltViewModel<SecondRegViewModel>()
             navController.previousBackStackEntry?.arguments?.getParcelable<User>(Constant.USER_KEY)
                 ?.let {
-                    SecondRegScreen(navController, it)
+                    SecondRegScreen(navController, it, viewModel)
                 }
         }
         composable(Screen.BottomBarScreen.route) { BottomBarScreen(navController) }
@@ -85,6 +98,5 @@ fun NavController.navigate(
     builder: NavOptionsBuilder.() -> Unit = {}
 ) {
     this.currentBackStackEntry?.arguments?.putAll(params)
-
     navigate(route, builder)
 }

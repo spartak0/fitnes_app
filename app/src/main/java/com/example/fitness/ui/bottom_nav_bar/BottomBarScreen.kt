@@ -1,5 +1,3 @@
-@file:JvmName("BottomBarItemScreenKt")
-
 package com.example.fitness.ui.bottom_nav_bar
 
 import android.annotation.SuppressLint
@@ -12,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -27,28 +26,28 @@ import com.example.fitness.ui.theme.Pink1
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun BottomBarScreen(navController: NavController) {
+fun BottomBarScreen(navController: NavHostController) {
     val navControllerBottomBar = rememberNavController()
-    Scaffold(bottomBar = { BottomBar(navController = navControllerBottomBar) }) {
-        BottomNavGraph(navController = navControllerBottomBar)
+    Scaffold(bottomBar = { BottomBar(navControllerBottomBar = navControllerBottomBar) }) {
+        BottomNavGraph(navControllerBottomBar = navControllerBottomBar, navControllerScreens = navController)
     }
 }
 
 @Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(navControllerBottomBar: NavHostController) {
     val screens = listOf(
         BottomBarItemScreen.Home,
         BottomBarItemScreen.Timers,
         BottomBarItemScreen.Profile
     )
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val navBackStackEntry by navControllerBottomBar.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     BottomNavigation(backgroundColor = Color.White, elevation = 5.dp) {
         screens.forEach { screen ->
             AddItem(
                 screen = screen,
                 currentDestination = currentDestination,
-                navController = navController
+                navControllerBottomBar = navControllerBottomBar
             )
         }
     }
@@ -58,7 +57,7 @@ fun BottomBar(navController: NavController) {
 fun RowScope.AddItem(
     screen: BottomBarItemScreen,
     currentDestination: NavDestination?,
-    navController: NavController
+    navControllerBottomBar: NavHostController
 ) {
     BottomNavigationItem(
         icon = {
@@ -71,16 +70,16 @@ fun RowScope.AddItem(
             it.route == screen.route
         } == true,
         selectedContentColor = Pink1,
-        onClick = { navController.navigate(screen.route) }
+        onClick = { navControllerBottomBar.navigate(screen.route) }
     )
 }
 
 
 @Composable
-fun BottomNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = BottomBarItemScreen.Home.route) {
-        composable(BottomBarItemScreen.Home.route) { HomeScreen(navController = navController) }
-        composable(BottomBarItemScreen.Timers.route) { TimersScreen(navController = navController) }
-        composable(BottomBarItemScreen.Profile.route) { ProfileScreen(navController = navController) }
+fun BottomNavGraph(navControllerBottomBar: NavHostController, navControllerScreens: NavHostController) {
+    NavHost(navController = navControllerBottomBar, startDestination = BottomBarItemScreen.Home.route) {
+        composable(BottomBarItemScreen.Home.route) { HomeScreen(navControllerBottomBar = navControllerBottomBar) }
+        composable(BottomBarItemScreen.Timers.route) { TimersScreen(navControllerBottomBar = navControllerBottomBar) }
+        composable(BottomBarItemScreen.Profile.route) { ProfileScreen(navControllerBottomBar = navControllerBottomBar, navControllerScreens= navControllerScreens) }
     }
 }

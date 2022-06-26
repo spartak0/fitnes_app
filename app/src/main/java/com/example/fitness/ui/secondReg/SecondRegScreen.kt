@@ -1,11 +1,8 @@
-package com.example.fitness.ui.reg
+package com.example.fitness.ui.secondReg
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.content.res.Resources
-import android.content.res.Resources.getSystem
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,19 +33,21 @@ import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
 import com.example.domain.models.User
 import com.example.fitness.R
+import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.theme.Typography
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import java.util.*
 
 @Composable
-fun SecondRegScreen(navController: NavController, user: User) {
-    var validation by remember { mutableStateOf(Pair(true, Resources.getSystem().getString(R.string.ok))) }
+fun SecondRegScreen(
+    navController: NavController,
+    user: User,
+    viewModel: SecondRegViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
+    val error by viewModel.error.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,63 +85,22 @@ fun SecondRegScreen(navController: NavController, user: User) {
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
                 .clickable {
-                    validation =
-                        secondValidationTest(user.gender, user.birthDay, user.weight, user.height)
-                    if (validation.first) {
-                        reg(user, navController.context)
+                    viewModel.validationTest(user)
+                    if (!error.first) {
+                        viewModel.regUser(user) {
+                            navController.navigate(Screen.BottomBarScreen.route)
+                        }
                     }
                 },
             gradient = Gradient.blue
         )
     }
-    if (!validation.first)
-        errorDialog(text = validation.second) {
-            validation = Pair(true, Resources.getSystem().getString(R.string.ok))
+    if (error.first)
+        errorDialog(text = error.second) {
+            viewModel.onErrorClick()
         }
 }
 
-fun secondValidationTest(
-    gender: String,
-    birthDay: String,
-    weight: Int,
-    height: Int
-): Pair<Boolean, String> {
-    if (gender.isEmpty()) return Pair(false, getSystem().getString(R.string.chooseGender))
-    if (birthDay.isEmpty()) return Pair(false, getSystem().getString(R.string.writeValidBirthday))
-    if (weight==0) return Pair(false, getSystem().getString(R.string.validWeight))
-    if (height==0) return Pair(false, getSystem().getString(R.string.validHeight))
-    return Pair(true, getSystem().getString(R.string.ok))
-}
-
-
-fun reg(user: User, context: Context) {
-    val auth = Firebase.auth
-    val database = Firebase.database
-    auth.createUserWithEmailAndPassword(user.email, user.password).addOnCompleteListener {
-        if (it.isSuccessful) {
-            auth.currentUser?.let { it1 ->
-                database.getReference(getSystem().getString(R.string.users)).child(it1.uid).setValue(user)
-                    .addOnCompleteListener { it2 ->
-                        if (it2.isSuccessful) {
-                            Toast.makeText(
-                                context,
-                                getSystem().getString(R.string.successReg),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        } else Toast.makeText(
-                            context,
-                            getSystem().getString(R.string.failedReg),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-            }
-        } else Toast.makeText(
-            context,
-            getSystem().getString(R.string.failedReg),
-            Toast.LENGTH_LONG
-        ).show()
-    }
-}
 
 @Composable
 fun Anthropometry(userAnthropometry: UserAnthropometry, user: User) {
@@ -181,10 +139,12 @@ fun Anthropometry(userAnthropometry: UserAnthropometry, user: User) {
         }
         when (userAnthropometry) {
             UserAnthropometry.Weight -> {
-                user.weight = if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+                user.weight =
+                    if (value.isEmpty() or !isNum(value)) 0 else value.toInt()
             }
             UserAnthropometry.Height -> {
-                user.height = if (value.isEmpty() or !value.matches("[\\d]+".toRegex())) 0 else value.toInt()
+                user.height =
+                    if (value.isEmpty() or !isNum(value)) 0 else value.toInt()
             }
         }
     }
@@ -305,4 +265,8 @@ fun Gender(user: User) {
         }
     }
     user.gender = gender
+}
+
+fun isNum(value: String): Boolean {
+    return value.matches("[\\d]+".toRegex())
 }

@@ -1,8 +1,6 @@
 package com.example.fitness.ui.reg
 
 
-import android.content.res.Resources.getSystem
-import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.domain.models.User
 import com.example.fitness.R
@@ -30,10 +29,13 @@ import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
 import com.example.utils.Constant
 
-
 @Composable
-fun FirstRegScreen(navController: NavController, user: User = User()) {
-    var validation by remember { mutableStateOf(Pair(true, getSystem().getString(R.string.ok))) }
+fun FirstRegScreen(
+    navController: NavController,
+    user: User = User(),
+    viewModel: FirstRegViewModel = viewModel()
+) {
+    val error by viewModel.error.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,14 +69,7 @@ fun FirstRegScreen(navController: NavController, user: User = User()) {
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
-                    validation =
-                        firstValidationTest(
-                            user.firstname,
-                            user.lastname,
-                            user.email,
-                            user.password
-                        )
-                    if (validation.first) {
+                    viewModel.onClickNext(user) {
                         navController.navigate(
                             Screen.SecondRegScreen.route,
                             bundleOf(Constant.USER_KEY to user)
@@ -105,27 +100,9 @@ fun FirstRegScreen(navController: NavController, user: User = User()) {
 
         }
     }
-    if (!validation.first)
-        errorDialog(text = validation.second) {
-            validation = Pair(true, "ok")
-        }
-}
-
-fun firstValidationTest(
-    firstname: String,
-    lastname: String,
-    email: String,
-    password: String
-): Pair<Boolean, String> {
-    if (firstname.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyFirstname))
-    if (lastname.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyLastname))
-    if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) return Pair(
-        false,
-        getSystem().getString(R.string.provideValidEmail)
-    )
-    if (password.isEmpty()) return Pair(false, getSystem().getString(R.string.emptyPassword))
-    if (password.length < 6) return Pair(false, getSystem().getString(R.string.minPasswordLength))
-    return Pair(true, getSystem().getString(R.string.ok))
+    if (error.first) errorDialog(text = error.second) {
+        viewModel.onErrorClick()
+    }
 }
 
 @Composable

@@ -1,11 +1,12 @@
 package com.example.fitness.ui.login
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,19 +23,18 @@ import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.Email
 import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.details.Password
+import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.main.navigate
 import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
 import com.example.utils.Constant
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     val user = User()
+    val validation by viewModel.error.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -59,15 +59,18 @@ fun LoginScreen(navController: NavController) {
         Password(user)
         Spacer(modifier = Modifier.size(350.dp))
         GradientView(
-            text = "Login",
+            text = stringResource(id = R.string.login),
             modifier = Modifier
                 .padding(horizontal = 30.dp)
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
+                    viewModel
+                        .loginUser(user.email, user.password) {
+                            navController.navigate(Screen.BottomBarScreen.route)
+                        }
                 },
             gradient = Gradient.blue
-
         )
         Spacer(modifier = Modifier.size(15.dp))
         Row() {
@@ -94,5 +97,11 @@ fun LoginScreen(navController: NavController) {
             )
         }
     }
+    if (validation.first) errorDialog(text = validation.second) {
+        viewModel.onErrorClick()
+    }
+
+
 }
+
 
