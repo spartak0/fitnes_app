@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="users">Users</string>
-    <string name="successReg">User has been registered successfully!</string>
-    <string name="failedReg">Failed to register! Try again!</string>
-    <string name="failedLogin">Failed to login! Please check your credentials</string>
+<!--    <string name="successReg">User has been registered successfully!</string>-->
+<!--    <string name="failedReg">Failed to register! Try again!</string>-->
+<!--    <string name="failedLogin">Failed to login! Please check your credentials</string>-->
 </resources>

@@ -33,10 +33,9 @@ import com.example.utils.Constant
 fun FirstRegScreen(
     navController: NavController,
     user: User = User(),
-    viewModel:RegViewModel = viewModel()
+    viewModel: FirstRegViewModel = viewModel()
 ) {
-    val ok = stringResource(id = R.string.ok)
-    var validation by remember { mutableStateOf(Pair(true, ok)) }
+    val error by viewModel.error.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,14 +69,7 @@ fun FirstRegScreen(
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
-                    validation =
-                        viewModel.firstValidationTest(
-                            user.firstname,
-                            user.lastname,
-                            user.email,
-                            user.password
-                        )
-                    if (validation.first) {
+                    viewModel.onClickNext(user){
                         navController.navigate(
                             Screen.SecondRegScreen.route,
                             bundleOf(Constant.USER_KEY to user)
@@ -108,10 +100,9 @@ fun FirstRegScreen(
 
         }
     }
-    if (!validation.first)
-        errorDialog(text = validation.second) {
-            validation = Pair(true, ok)
-        }
+    if (error.first) errorDialog(text = error.second) {
+        viewModel.onErrorClick()
+    }
 }
 
 @Composable

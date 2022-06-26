@@ -1,8 +1,7 @@
-package com.example.fitness.ui.reg
+package com.example.fitness.ui.secondReg
 
 import android.app.DatePickerDialog
 import android.content.Context
-import android.content.res.Resources
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,10 +33,13 @@ import androidx.compose.ui.unit.toSize
 import androidx.navigation.NavController
 import com.example.domain.models.User
 import com.example.fitness.R
+import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
+import com.example.fitness.ui.secondReg.SecondRegViewModel
+import com.example.fitness.ui.secondReg.UserAnthropometry
 import com.example.fitness.ui.theme.Typography
 import java.util.*
 
@@ -45,12 +47,9 @@ import java.util.*
 fun SecondRegScreen(
     navController: NavController,
     user: User,
-    viewModel: RegViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: SecondRegViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
-    val ok = stringResource(id = R.string.ok)
-    var validation by remember {
-        mutableStateOf(Pair(true, ok))
-    }
+    val error by viewModel.error.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,23 +87,24 @@ fun SecondRegScreen(
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
                 .clickable {
-                    validation =
-                        viewModel.secondValidationTest(
-                            user.gender,
-                            user.birthDay,
-                            user.weight,
-                            user.height
-                        )
-                    if (validation.first) {
-                        viewModel.regUser(user)
+                    viewModel.validationTest(
+                        user.gender,
+                        user.birthDay,
+                        user.weight,
+                        user.height
+                    )
+                    if (!error.first) {
+                        viewModel.regUser(user) {
+                            navController.navigate(Screen.BottomBarScreen.route)
+                        }
                     }
                 },
             gradient = Gradient.blue
         )
     }
-    if (!validation.first)
-        errorDialog(text = validation.second) {
-            validation = Pair(true, ok)
+    if (error.first)
+        errorDialog(text = error.second) {
+            viewModel.onErrorClick()
         }
 }
 

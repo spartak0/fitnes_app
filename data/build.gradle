@@ -34,9 +34,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.5'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
-
-    //coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.2'
     
     implementation project(path: ':domain')
 }

@@ -1,7 +1,5 @@
 package com.example.fitness.ui.login
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,17 +27,13 @@ import com.example.fitness.ui.main.navigate
 import com.example.fitness.ui.theme.Typography
 import com.example.fitness.ui.theme.myFontFamily
 import com.example.utils.Constant
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
-    if (viewModel.getCurrentUser() != null) navController.navigate(Screen.BottomBarScreen.route)
     val user = User()
-    val validation by viewModel.validation.collectAsState()
+    val validation by viewModel.error.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,8 +64,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
-                    viewModel.onClickLogin(user.email, user.password) {
-                        navController.navigate(Screen.BottomBarScreen.route)
+                    runBlocking {
+                        viewModel
+                            .loginUser(user.email, user.password){
+                                navController.navigate(Screen.BottomBarScreen.route)
+                            }
                     }
                 },
             gradient = Gradient.blue
@@ -101,9 +98,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             )
         }
     }
-    if (!validation.first)
-        errorDialog(text = validation.second) {
-            viewModel.onErrorClick()
-        }
+    if (validation.first) errorDialog(text = validation.second) {
+        viewModel.onErrorClick()
+    }
+
+
 }
+
 

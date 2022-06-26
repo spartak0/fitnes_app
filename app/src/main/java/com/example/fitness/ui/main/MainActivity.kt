@@ -17,8 +17,9 @@ import com.example.fitness.ui.bottom_nav_bar.BottomBarScreen
 import com.example.fitness.ui.login.LoginScreen
 import com.example.fitness.ui.login.LoginViewModel
 import com.example.fitness.ui.reg.FirstRegScreen
-import com.example.fitness.ui.reg.RegViewModel
-import com.example.fitness.ui.reg.SecondRegScreen
+import com.example.fitness.ui.reg.FirstRegViewModel
+import com.example.fitness.ui.secondReg.SecondRegScreen
+import com.example.fitness.ui.secondReg.SecondRegViewModel
 import com.example.fitness.ui.theme.FitnesSTheme
 import com.example.fitness.ui.welcome.WelcomeScreen
 import com.example.utils.Constant
@@ -52,11 +53,11 @@ fun Navigation() {
             LoginScreen(navController, viewModel)
         }
         composable(Screen.FirstRegScreen.route) {
-            val viewModel: RegViewModel = hiltViewModel<RegViewModel>()
+            val viewModel: FirstRegViewModel = hiltViewModel<FirstRegViewModel>()
             FirstRegScreen(navController = navController, viewModel = viewModel)
         }
         composable(Screen.SecondRegScreen.route) {
-            val viewModel: RegViewModel = hiltViewModel<RegViewModel>()
+            val viewModel: SecondRegViewModel = hiltViewModel<SecondRegViewModel>()
             navController.previousBackStackEntry?.arguments?.getParcelable<User>(Constant.USER_KEY)
                 ?.let {
                     SecondRegScreen(navController, it, viewModel)
@@ -95,6 +96,5 @@ fun NavController.navigate(
     builder: NavOptionsBuilder.() -> Unit = {}
 ) {
     this.currentBackStackEntry?.arguments?.putAll(params)
-
     navigate(route, builder)
 }

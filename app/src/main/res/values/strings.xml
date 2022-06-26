@@ -40,4 +40,5 @@
     <string name="failedLogin">failed login</string>
     <string name="failedReg">failed reg</string>
     <string name="notFoundUser">Not found user</string>
+    <string name="userNotFound">User not found</string>
 </resources>
