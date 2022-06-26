@@ -4,6 +4,8 @@ import android.content.Context
 import com.example.domain.models.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -34,5 +36,9 @@ class FirebaseService(
         userID: String
     ): Task<Void> {
         return database.getReference(context.getString(R.string.users)).child(userID).setValue(user)
+    }
+
+    fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
     }
 }

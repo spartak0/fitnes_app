@@ -69,7 +69,7 @@ fun FirstRegScreen(
                 .height(dimensionResource(id = R.dimen.view_height))
                 .fillMaxWidth()
                 .clickable {
-                    viewModel.onClickNext(user){
+                    viewModel.onClickNext(user) {
                         navController.navigate(
                             Screen.SecondRegScreen.route,
                             bundleOf(Constant.USER_KEY to user)

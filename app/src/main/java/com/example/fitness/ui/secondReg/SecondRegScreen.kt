@@ -38,8 +38,6 @@ import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
 import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
-import com.example.fitness.ui.secondReg.SecondRegViewModel
-import com.example.fitness.ui.secondReg.UserAnthropometry
 import com.example.fitness.ui.theme.Typography
 import java.util.*
 

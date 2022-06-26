@@ -11,6 +11,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.domain.FirebaseRepository
 import com.example.domain.models.User
 import com.example.fitness.ui.Screen
 import com.example.fitness.ui.bottom_nav_bar.BottomBarScreen
@@ -23,29 +24,30 @@ import com.example.fitness.ui.secondReg.SecondRegViewModel
 import com.example.fitness.ui.theme.FitnesSTheme
 import com.example.fitness.ui.welcome.WelcomeScreen
 import com.example.utils.Constant
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var firebaseRepository: FirebaseRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             FitnesSTheme {
-                Navigation()
+                Navigation(firebaseRepository.getCurrentUser())
             }
         }
     }
 }
 
 @Composable
-fun Navigation() {
+fun Navigation(currentUser: FirebaseUser?) {
     val navController = rememberNavController()
-    val user = Firebase.auth.currentUser
     NavHost(
         navController = navController,
-        startDestination = if (user == null) Screen.LoginScreen.route else Screen.BottomBarScreen.route
+        startDestination = if (currentUser == null) Screen.LoginScreen.route else Screen.BottomBarScreen.route
     ) {
         composable(Screen.WelcomeScreen.route) { WelcomeScreen(navController) }
         composable(Screen.LoginScreen.route) {

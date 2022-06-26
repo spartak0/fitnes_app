@@ -27,26 +27,9 @@ class SecondRegViewModel @Inject constructor(
 
     private val _error = MutableStateFlow(Pair(false, context.getString(R.string.ok)))
     val error = _error.asStateFlow()
-//
-//    fun regUser(user: User, navigate: () -> Unit) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            repository.regUser(user.email, user.password).addOnCompleteListener {
-//                //что внутри листнера вызывается в мэйн треде
-//                viewModelScope.launch(Dispatchers.IO) {
-//                    if (it.isSuccessful) {
-//                        val auth = FirebaseAuth.getInstance()
-//                        auth.currentUser?.let { it1 ->
-//                            addUserInDatabase(user, it1.uid)
-//                        }
-//                    } else _error.value = Pair(true, context.getString(R.string.failedReg))
-//                }
-//            }
-//        }
-//    }
-
 
     fun validationTest(
-        user:User
+        user: User
     ) {
         if (user.gender.isEmpty())
             _error.value =
@@ -56,8 +39,10 @@ class SecondRegViewModel @Inject constructor(
                 )
         else if (user.birthDay.isEmpty()) _error.value =
             Pair(true, context.getString(R.string.writeValidBirthday))
-        else if (user.weight == 0) _error.value = Pair(true, context.getString(R.string.validWeight))
-        else if (user.height == 0) _error.value = Pair(true, context.getString(R.string.validHeight))
+        else if (user.weight == 0) _error.value =
+            Pair(true, context.getString(R.string.validWeight))
+        else if (user.height == 0) _error.value =
+            Pair(true, context.getString(R.string.validHeight))
         else _error.value = Pair(false, context.getString(R.string.ok))
     }
 
@@ -71,8 +56,7 @@ class SecondRegViewModel @Inject constructor(
             if (!_error.value.first) {
                 repository.regUser(user.email, user.password).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val auth = FirebaseAuth.getInstance()
-                        auth.currentUser?.let { it1 ->
+                        repository.getCurrentUser()?.let { it1 ->
                             viewModelScope.launch(Dispatchers.IO) {
                                 addUserInDatabase(user, it1.uid)
                             }

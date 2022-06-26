@@ -1,26 +1,16 @@
 package com.example.fitness.ui.reg
 
 import android.content.Context
-import android.location.GnssNavigationMessage
-import android.util.Log
 import android.util.Patterns
-import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.data.FirebaseRepositoryImpl
 import com.example.domain.models.User
 import com.example.fitness.R
-import com.example.fitness.ui.Screen
-import com.example.fitness.ui.main.navigate
-import com.example.utils.Constant
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +22,7 @@ class FirstRegViewModel @Inject constructor(
     val error = _error.asStateFlow()
 
 
-    fun validationTest(
+    private fun validationTest(
         user: User
     ) {
         if (user.firstname.isEmpty()) _error.value =

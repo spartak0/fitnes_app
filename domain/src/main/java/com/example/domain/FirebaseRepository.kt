@@ -1,11 +1,9 @@
 package com.example.domain
 
-import android.media.MediaPlayer
 import com.example.domain.models.User
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
-import kotlinx.coroutines.flow.Flow
+import com.google.firebase.auth.FirebaseUser
 
 interface FirebaseRepository {
     fun regUser(
@@ -19,4 +17,5 @@ interface FirebaseRepository {
     ): Task<AuthResult>
 
     fun addUserInDatabase(user: User, userID: String): Task<Void>
+    fun getCurrentUser():FirebaseUser?
 }
