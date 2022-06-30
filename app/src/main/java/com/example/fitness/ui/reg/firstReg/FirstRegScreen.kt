@@ -1,4 +1,4 @@
-package com.example.fitness.ui.reg
+package com.example.fitness.ui.reg.firstReg
 
 
 import androidx.compose.foundation.background

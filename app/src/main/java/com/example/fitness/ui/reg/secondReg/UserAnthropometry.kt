@@ -1,4 +1,4 @@
-package com.example.fitness.ui.secondReg
+package com.example.fitness.ui.reg.secondReg
 
 import com.example.fitness.R
 

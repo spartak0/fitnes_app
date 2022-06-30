@@ -41,4 +41,7 @@
     <string name="failedReg">failed reg</string>
     <string name="notFoundUser">Not found user</string>
     <string name="userNotFound">User not found</string>
+    <string name="warning">Warning</string>
+    <string name="verifyEmail">Verify email</string>
+    <string name="cancel">CANCEL</string>
 </resources>
