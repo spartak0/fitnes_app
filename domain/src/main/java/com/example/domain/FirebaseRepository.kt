@@ -18,4 +18,9 @@ interface FirebaseRepository {
 
     fun addUserInDatabase(user: User, userID: String): Task<Void>
     fun getCurrentUser():FirebaseUser?
+    fun signOut()
+    fun verifiedEmail(user: FirebaseUser)
+    fun deleteCurrentUserFromAuth():Task<Void>?
+    fun deleteUserFromBase(userID: String):Task<Void>
+    fun sendEmailVerification():Task<Void>?
 }

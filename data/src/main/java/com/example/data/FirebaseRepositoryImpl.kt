@@ -25,5 +25,25 @@ class FirebaseRepositoryImpl(
         return firebaseService.getCurrentUser()
     }
 
+    override fun signOut() {
+        firebaseService.signOut()
+    }
+
+    override fun verifiedEmail(user: FirebaseUser) {
+        firebaseService.verifiedEmail(user)
+    }
+
+    override fun deleteCurrentUserFromAuth(): Task<Void>? {
+        return firebaseService.deleteCurrentUserFromAuth()
+    }
+
+    override fun deleteUserFromBase(userID: String): Task<Void> {
+        return firebaseService.deleteUserFromBase(userID)
+    }
+
+    override fun sendEmailVerification(): Task<Void>? {
+        return firebaseService.sendEmailVerification()
+    }
+
 
 }

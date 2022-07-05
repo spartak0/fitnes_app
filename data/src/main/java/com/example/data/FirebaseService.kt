@@ -4,7 +4,6 @@ import android.content.Context
 import com.example.domain.models.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -41,4 +40,24 @@ class FirebaseService(
     fun getCurrentUser(): FirebaseUser? {
         return auth.currentUser
     }
+
+    fun signOut() {
+        auth.signOut()
+    }
+
+    fun verifiedEmail(user: FirebaseUser) {
+        user.sendEmailVerification()
+    }
+
+    fun deleteCurrentUserFromAuth(): Task<Void>? {
+        return auth.currentUser?.delete()
+    }
+
+    fun deleteUserFromBase(userID: String): Task<Void> {
+        return database.getReference(context.getString(R.string.users)).child(userID).removeValue()
+    }
+    fun sendEmailVerification(): Task<Void>? {
+        return auth.currentUser?.sendEmailVerification()
+    }
+
 }

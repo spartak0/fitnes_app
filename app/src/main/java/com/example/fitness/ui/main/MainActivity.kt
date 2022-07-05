@@ -17,10 +17,10 @@ import com.example.fitness.ui.Screen
 import com.example.fitness.ui.bottom_nav_bar.BottomBarScreen
 import com.example.fitness.ui.login.LoginScreen
 import com.example.fitness.ui.login.LoginViewModel
-import com.example.fitness.ui.reg.FirstRegScreen
-import com.example.fitness.ui.reg.FirstRegViewModel
-import com.example.fitness.ui.secondReg.SecondRegScreen
-import com.example.fitness.ui.secondReg.SecondRegViewModel
+import com.example.fitness.ui.reg.firstReg.FirstRegScreen
+import com.example.fitness.ui.reg.firstReg.FirstRegViewModel
+import com.example.fitness.ui.reg.secondReg.SecondRegScreen
+import com.example.fitness.ui.reg.secondReg.SecondRegViewModel
 import com.example.fitness.ui.theme.FitnesSTheme
 import com.example.fitness.ui.welcome.WelcomeScreen
 import com.example.utils.Constant
@@ -47,7 +47,7 @@ fun Navigation(currentUser: FirebaseUser?) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = if (currentUser == null) Screen.LoginScreen.route else Screen.BottomBarScreen.route
+        startDestination = if ((currentUser == null) || !currentUser.isEmailVerified) Screen.LoginScreen.route else Screen.BottomBarScreen.route
     ) {
         composable(Screen.WelcomeScreen.route) { WelcomeScreen(navController) }
         composable(Screen.LoginScreen.route) {

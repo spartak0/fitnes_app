@@ -1,4 +1,4 @@
-package com.example.fitness.ui.secondReg
+package com.example.fitness.ui.reg.secondReg
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -36,6 +36,7 @@ import com.example.fitness.R
 import com.example.fitness.ui.Screen
 import com.example.fitness.ui.details.EditText
 import com.example.fitness.ui.details.Gradient
+import com.example.fitness.ui.details.auth.waitVerificationDialog
 import com.example.fitness.ui.details.errorDialog
 import com.example.fitness.ui.main.GradientView
 import com.example.fitness.ui.theme.Typography
@@ -48,6 +49,7 @@ fun SecondRegScreen(
     viewModel: SecondRegViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val error by viewModel.error.collectAsState()
+    val waitVerification by viewModel.waitVerification.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -85,10 +87,9 @@ fun SecondRegScreen(
                 .height(dimensionResource(id = R.dimen.view_height))
                 .padding(horizontal = 30.dp)
                 .clickable {
-                    viewModel.validationTest(user)
                     if (!error.first) {
                         viewModel.regUser(user) {
-                            navController.navigate(Screen.BottomBarScreen.route)
+                            navController.navigate(Screen.LoginScreen.route)
                         }
                     }
                 },
@@ -99,6 +100,17 @@ fun SecondRegScreen(
         errorDialog(text = error.second) {
             viewModel.onErrorClick()
         }
+    if (waitVerification) {
+        waitVerificationDialog({
+            viewModel.verifiedOnClick() {
+                navController.navigate(Screen.BottomBarScreen.route)
+            }
+        }, {
+            viewModel.verifiedOnClickCancel() {
+                navController.navigate(Screen.LoginScreen.route)
+            }
+        })
+    }
 }
 
 
@@ -266,6 +278,7 @@ fun Gender(user: User) {
     }
     user.gender = gender
 }
+
 
 fun isNum(value: String): Boolean {
     return value.matches("[\\d]+".toRegex())
